@@ -14,8 +14,6 @@ const Header = () => {
     if (persons.length <= 1) badgeStyle = "danger";
 
     return (
-        // <SimpleContext.Consumer>
-        // {context => (
         <div>
             <Alert variant="info">
                 <h2>{appTitle}</h2>
@@ -28,8 +26,6 @@ const Header = () => {
                 نفر می باشد
             </Alert>
         </div>
-        // )}
-        // </SimpleContext.Consumer>
     );
 };
 

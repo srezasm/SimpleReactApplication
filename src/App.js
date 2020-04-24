@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import Persons from "./components/Person/Persons";
 import Header from "./components/common/Header";
+import SimpleContext from "./context/SimpleContext";
 
 class App extends Component {
     state = {
@@ -83,48 +84,59 @@ class App extends Component {
         }
 
         return (
-            <div className="rtl text-center">
-                <Header
-                    personsLength={persons.length}
-                    appTitle={this.props.title}
-                />
+            <SimpleContext.Provider
+                value={{
+                    state: this.state,
+                    handleDeletePerson: this.handleDeletePerson,
+                    handleNameChange: this.handleNameChange,
+                    handleNewPerson: this.handleNewPerson,
+                    setPerson: this.setPerson
+                }}
+            >
 
-                <div className="m-2 p-2">
-                    <form
-                        className="form-inline justify-content-center"
-                        onSubmit={event => event.preventDefault()}
-                    >
-                        <div className="input-group w-25">
-                            <input
-                                type="text"
-                                placeholder="اسم بهم بده"
-                                className="form-control"
-                                onChange={this.setPerson}
-                                value={this.state.person}
-                            />
-                            <div className="input-group-prepend">
-                                <Button
-                                    type="submit"
-                                    variant="success"
-                                    size="sm"
-                                    className="fa fa-plus-square"
-                                    onClick={this.handleNewPerson}
+                <div className="rtl text-center">
+                    <Header
+                        personsLength={persons.length}
+                        appTitle={this.props.title}
+                    />
+
+                    <div className="m-2 p-2">
+                        <form
+                            className="form-inline justify-content-center"
+                            onSubmit={event => event.preventDefault()}
+                        >
+                            <div className="input-group w-25">
+                                <input
+                                    type="text"
+                                    placeholder="اسم بهم بده"
+                                    className="form-control"
+                                    onChange={this.setPerson}
+                                    value={this.state.person}
                                 />
+                                <div className="input-group-prepend">
+                                    <Button
+                                        type="submit"
+                                        variant="success"
+                                        size="sm"
+                                        className="fa fa-plus-square"
+                                        onClick={this.handleNewPerson}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
-                <Button
-                    onClick={this.handleShowPerson}
-                    variant={showPersons ? "info" : "danger"}
-                >
-                    نمایش اشخاص
+                    <Button
+                        onClick={this.handleShowPerson}
+                        variant={showPersons ? "info" : "danger"}
+                    >
+                        نمایش اشخاص
                 </Button>
 
-                {person}
-                <ToastContainer />
-            </div>
+                    {person}
+                    <ToastContainer />
+                </div>
+            </SimpleContext.Provider>
         );
     }
 }
