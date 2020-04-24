@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -6,21 +6,19 @@ import Persons from "./components/Person/Persons";
 import Header from "./components/common/Header";
 import SimpleContext from "./context/SimpleContext";
 
-class App extends Component {
-    state = {
-        persons: [],
-        person: "",
-        showPersons: true
+const App = () => {
+    const [getPersons, setPersons] = useState([]);
+    const [getSinglePerson, setSinglePerson] = useState("");
+    const [getShowPersons, setShowPersons] = useState(true);
+
+    const handleShowPerson = () => {
+        setShowPersons(!getShowPersons);
     };
 
-    handleShowPerson = () => {
-        this.setState({ showPersons: !this.state.showPersons });
-    };
-
-    handleDeletePerson = id => {
-        const persons = [...this.state.persons];
+    const handleDeletePerson = id => {
+        const persons = [...getPersons];
         const filteredPersons = persons.filter(p => p.id !== id); //! = =
-        this.setState({ persons: filteredPersons });
+        setPersons(filteredPersons);
 
         const personIndex = persons.findIndex(p => p.id === id);
         const person = persons[personIndex];
@@ -31,30 +29,30 @@ class App extends Component {
         });
     };
 
-    handleNameChange = (event, id) => {
-        const { persons: allPersons } = this.state;
+    const handleNameChange = (event, id) => {
+        const { persons: allPersons } = getPersons;
 
         const personIndex = allPersons.findIndex(p => p.id === id);
         const person = allPersons[personIndex];
         person.fullname = event.target.value;
-        console.log(event);
 
         const persons = [...allPersons];
 
         persons[personIndex] = person;
-        this.setState({ persons });
+        setPersons(persons);
     };
 
-    handleNewPerson = () => {
-        const persons = [...this.state.persons];
+    const handleNewPerson = () => {
+        const persons = [...getPersons];
         const person = {
             id: Math.floor(Math.random() * 1000),
-            fullname: this.state.person
+            fullname: getSinglePerson
         };
 
         if (person.fullname !== "" && person.fullname !== " ") {
             persons.push(person);
-            this.setState({ persons, person: "" });
+            setPersons(persons);
+            setSinglePerson("")
 
             toast.success("شخصی با موفقیت اضافه شد.", {
                 position: "bottom-right",
@@ -64,81 +62,71 @@ class App extends Component {
         }
     };
 
-    setPerson = event => {
-        this.setState({ person: event.target.value });
+    const setPerson = event => {
+        setSinglePerson(event.target.value);
     };
 
-    render() {
-        const { persons, showPersons } = this.state;
+    let person = null;
 
-        let person = null;
-
-        if (showPersons) {
-            person = (
-                <Persons
-                    persons={persons}
-                    personDelete={this.handleDeletePerson}
-                    personChange={this.handleNameChange}
-                />
-            );
-        }
-
-        return (
-            <SimpleContext.Provider
-                value={{
-                    state: this.state,
-                    handleDeletePerson: this.handleDeletePerson,
-                    handleNameChange: this.handleNameChange,
-                    handleNewPerson: this.handleNewPerson,
-                    setPerson: this.setPerson
-                }}
-            >
-
-                <div className="rtl text-center">
-                    <Header
-                        personsLength={persons.length}
-                        appTitle={this.props.title}
-                    />
-
-                    <div className="m-2 p-2">
-                        <form
-                            className="form-inline justify-content-center"
-                            onSubmit={event => event.preventDefault()}
-                        >
-                            <div className="input-group w-25">
-                                <input
-                                    type="text"
-                                    placeholder="اسم بهم بده"
-                                    className="form-control"
-                                    onChange={this.setPerson}
-                                    value={this.state.person}
-                                />
-                                <div className="input-group-prepend">
-                                    <Button
-                                        type="submit"
-                                        variant="success"
-                                        size="sm"
-                                        className="fa fa-plus-square"
-                                        onClick={this.handleNewPerson}
-                                    />
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <Button
-                        onClick={this.handleShowPerson}
-                        variant={showPersons ? "info" : "danger"}
-                    >
-                        نمایش اشخاص
-                </Button>
-
-                    {person}
-                    <ToastContainer />
-                </div>
-            </SimpleContext.Provider>
+    if (getShowPersons) {
+        person = (
+            <Persons />
         );
     }
+
+    return (
+        <SimpleContext.Provider
+            value={{
+                persons: getPersons,
+                person: getSinglePerson,
+                handleDeletePerson: handleDeletePerson,
+                handleNameChange: handleNameChange,
+                handleNewPerson: handleNewPerson,
+                setPerson: setPerson
+            }}
+        >
+
+            <div className="rtl text-center">
+                <Header header="مدیریت کننده اشخاص" />
+
+                <div className="m-2 p-2">
+                    <form
+                        className="form-inline justify-content-center"
+                        onSubmit={event => event.preventDefault()}
+                    >
+                        <div className="input-group w-25">
+                            <input
+                                type="text"
+                                placeholder="اسم بهم بده"
+                                className="form-control"
+                                onChange={setPerson}
+                                value={getSinglePerson}
+                            />
+                            <div className="input-group-prepend">
+                                <Button
+                                    type="submit"
+                                    variant="success"
+                                    size="sm"
+                                    className="fa fa-plus-square"
+                                    onClick={handleNewPerson}
+                                />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <Button
+                    onClick={handleShowPerson}
+                    variant={getShowPersons ? "info" : "danger"}
+                >
+                    نمایش اشخاص
+                </Button>
+
+                {person}
+                <ToastContainer />
+            </div>
+        </SimpleContext.Provider>
+    );
 }
 
 export default App;

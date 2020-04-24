@@ -5,10 +5,10 @@ import SimpleContext from "../../context/SimpleContext";
 
 const Persons = () => {
     const context = useContext(SimpleContext);
-    
+
     return (
         <div>
-            {context.state.persons.map(person => (
+            {context.persons.map(person => (
                 <Person
                     key={person.id}
                     fullname={person.fullname}
